@@ -3,6 +3,9 @@ import dotenv from 'dotenv';
 import cors from 'cors';
 import helmet from 'helmet';
 import mongoose from 'mongoose';
+import authRoutes from './routes/auth';
+import orderRoutes from './routes/orders';
+import productRoutes from './routes/products';
 
 dotenv.config();
 
@@ -30,6 +33,10 @@ const connectDB = async () => {
 app.get('/api/health', (req: Request, res: Response) => {
   res.json({ status: 'API is running', timestamp: new Date() });
 });
+
+app.use('/api/auth', authRoutes);
+app.use('/api/orders', orderRoutes);
+app.use('/api/products', productRoutes);
 
 // Error handling middleware
 app.use((err: any, req: Request, res: Response) => {
