@@ -1,13 +1,17 @@
 import 'reflect-metadata';
-import express, { Express, Request, Response } from 'express';
+import express, { Express, Request, Response, NextFunction } from 'express';
 import dotenv from 'dotenv';
 import cors from 'cors';
 import helmet from 'helmet';
-import AppDataSource from './config/database';
+import { AppDataSource } from "./config/database";
+import { errorHandler } from './middleware/errorHandler';
 import authRoutes from './routes/auth';
 import orderRoutes from './routes/orders';
 import productRoutes from './routes/products';
 import deliveryRoutes from './routes/delivery';
+import cylinderRoutes from './routes/cylinders';
+import accessoryRoutes from './routes/accessories';
+import walletRoutes from './routes/wallet';
 
 dotenv.config();
 
@@ -42,15 +46,12 @@ app.use('/api/auth', authRoutes);
 app.use('/api/orders', orderRoutes);
 app.use('/api/products', productRoutes);
 app.use('/api/delivery', deliveryRoutes);
+app.use('/api/cylinders', cylinderRoutes);
+app.use('/api/accessories', accessoryRoutes);
+app.use('/api/wallet', walletRoutes);
 
-// Error handling middleware
-app.use((err: any, req: Request, res: Response) => {
-  console.error(err.stack);
-  res.status(err.status || 500).json({
-    success: false,
-    error: err.message || 'Internal Server Error',
-  });
-});
+// Error handling middleware (TypeORM-aware)
+app.use(errorHandler);
 
 // Start server
 const startServer = async () => {
